@@ -15,3 +15,10 @@ class Users(db.Model):
     role = db.Column(Enum('member', 'admin', 'superadmin', name='role_enum'), nullable=False, default='member')
     is_verified = db.Column(db.Boolean, nullable=False, default=False)
     registered_on = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
+
+    def __init__(email, password):
+        '''
+        instantiates a user object
+        '''
+        self.email = email
+        self.passwordhash = self.generate_passwordhash(password)
