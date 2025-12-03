@@ -1,4 +1,4 @@
-from app imiport db
+from app import db, bcrypt
 import uuid
 from datetime import datetime
 from sqlalchemy import TIMESTAMP, Enum
@@ -22,3 +22,9 @@ class Users(db.Model):
         '''
         self.email = email
         self.passwordhash = self.generate_passwordhash(password)
+
+    def generate_passwordhash(self, password):
+        '''
+        hashes the password for security reasons
+        '''
+        return bcrypt.generate_password_hash(password)
