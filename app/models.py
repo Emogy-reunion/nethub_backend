@@ -28,3 +28,9 @@ class Users(db.Model):
         hashes the password for security reasons
         '''
         return bcrypt.generate_password_hash(password)
+
+    def check_passwordhash(self, password):
+        '''
+        checks if the input password matches the stored hash
+        '''
+        return bcrypt.check_password_hash(self.passwordhash, password)
