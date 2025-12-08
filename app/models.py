@@ -49,3 +49,7 @@ class Products(db.Model):
     created_at = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
     updated at = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
     user = db.relationship('Users', back_populates='products', lazy='selectin')
+
+class ProductImages(db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    filename = db.Column(db.String(200), nullable=False)
