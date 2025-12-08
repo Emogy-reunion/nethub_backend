@@ -14,8 +14,8 @@ def register():
     allows users to create accounts
     '''
     try:
-        data = request.get_json()
-        form = RegistrationForm(**data)
+        data = request.get_json() or {}
+        form = RegistrationForm(data)
 
         if not form.validate():
             return jsonify({'errors': form.errors}), 400
