@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.forms import RegistrationForm
 from app.models import Users
 from app import db
+from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies
 
 
 auth = Blueprint('auth', __name__)
@@ -33,4 +34,41 @@ def register():
             return jsonify({'success': 'Your account was created successfully. Enjoy your experience.'}), 200
     except Exception as e:
         db.session.rollback()
+        return jsonify({'error': 'An unexpected error occurred. Please try again!'}), 500
+
+
+@auth.route('/login', methods=['POST'])
+def login():
+    '''
+    authenticates the users
+    '''
+    try:
+        data = request.get_json()
+        form = LoginForm(**data)
+
+        if not form.validate():
+            return jsonify({"errors": form.errors}), 400
+
+        email = form.email.data.strip().lower()
+        password = form.password.data.strip()
+
+        user = Users.query.filter_by(email=email).first()
+
+        if user and Users.check_passwordhash(password):
+            '''
+            checks if the user exists
+            compares the user password and stored hash
+            create the user access and refresh token
+            adds the tokens to the cookies
+            '''
+            access_token = create_access_token(identity=user.id)
+            refresh_token = create_refresh_token(identity=user.id)
+
+            response = jsonify({'success': 'Logged in successfully. Welcome!'})
+            set_access_cookies(response, access_token)
+            set_refresh_token(response, refresh_token)
+            return response, 200
+        else:
+            return jsonify({'error': 'Incorrect credentials. Please try again!'}), 400
+    except Exception as e:
         return jsonify({'error': 'An unexpected error occurred. Please try again!'}), 500
