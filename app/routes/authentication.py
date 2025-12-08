@@ -88,3 +88,18 @@ def refresh():
         return response, 201
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred. Please try again!'}), 500
+
+
+@auth.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    '''
+    removes the access and refresh token from the cookies
+    logging the user out
+    '''
+    try:
+        response = jsonify({'success': 'Logged out successfully'})
+        unset_jwt_cookies(response)
+        return response, 200
+    except Exception as e:
+        return jsonify({'error': 'An unexpected error occurred. Please try again!'}), 500
