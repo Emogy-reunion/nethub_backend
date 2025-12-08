@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import TIMESTAMP, Enum
 from sqlalchemy.sql import func
-
+from sqlalchemy.dialects.postgresql import JSONB
 
 class Users(db.Model):
     '''
@@ -34,3 +34,15 @@ class Users(db.Model):
         checks if the input password matches the stored hash
         '''
         return bcrypt.check_password_hash(self.passwordhash, password)
+
+
+class Products(db.Model):
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    category = db.Column(Enum('networking-devices', 'computer-accessories', name='product_category'), nullable=False)
+    price = db.Column(db.Numeric(10, 2), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    features = db.Column(JSONB, nullable=False, default=dict)
+    stock = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
+    updated at = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
