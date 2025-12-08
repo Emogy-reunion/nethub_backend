@@ -43,8 +43,8 @@ def login():
     authenticates the users
     '''
     try:
-        data = request.get_json()
-        form = LoginForm(**data)
+        data = request.get_json() or {}
+        form = LoginForm(data)
 
         if not form.validate():
             return jsonify({"errors": form.errors}), 400
@@ -54,7 +54,7 @@ def login():
 
         user = Users.query.filter_by(email=email).first()
 
-        if user and Users.check_passwordhash(password):
+        if user and user.check_passwordhash(password):
             '''
             checks if the user exists
             compares the user password and stored hash
