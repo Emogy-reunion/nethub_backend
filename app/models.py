@@ -47,9 +47,12 @@ class Products(db.Model):
     features = db.Column(JSONB, nullable=False, default=dict)
     stock = db.Column(db.Integer, nullable=False)
     created_at = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
-    updated at = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
     user = db.relationship('Users', back_populates='products', lazy='selectin')
+    images = db.relationship('ProductImages', back_populates='product', lazy='selectin', cascade='all, delete')
 
 class ProductImages(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id', ondelete='cascade'), nullable=False)
     filename = db.Column(db.String(200), nullable=False)
+    product = db.relationship('Products', back_populates='images', lazy='selectin')
