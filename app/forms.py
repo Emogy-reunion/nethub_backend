@@ -1,6 +1,7 @@
 from flask_wtf import  FlaskForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, EqualTo, Email, Length, Regexp
+from app.utils.custom_form_validators import length_check
 
 
 class RegistrationForm(FlaskForm):
@@ -43,4 +44,22 @@ class ProductUploadForm(FlaskForm):
     '''
     name = StringField('Name', validators=[
         DataRequired(),
+        length_check(4, 50, 'Name')
+        ])
+    category = StringField('Category', validators=[
+        DataRequired(),
+        AnyOf(['networking-devices', 'computer-accessories'], message='Please select a valid category.')
+        ])
+    price = DecimalField('Price',
+                         places=2,
+                         rounding=None,
+                         validators=[
+                             DataRequired(),
+                             NumberRange(min=1, max=1000000, message="Price must be at least 1")
+                        ])
+    description = TextAreaField('Description', validators=[
+        DataRequired(),
+        length_check(80, 250, 'Description')
+        ])
+
 
