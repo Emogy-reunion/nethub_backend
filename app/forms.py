@@ -1,7 +1,7 @@
 from flask_wtf import  FlaskForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, EqualTo, Email, Length, Regexp
-from app.utils.custom_form_validators import length_check
+from app.utils.custom_form_validators import length_check, validate_features_field
 
 
 class RegistrationForm(FlaskForm):
@@ -60,6 +60,14 @@ class ProductUploadForm(FlaskForm):
     description = TextAreaField('Description', validators=[
         DataRequired(),
         length_check(80, 250, 'Description')
+        ])
+    features = TextAreaField('Features', validators=[
+        DataRequired(),
+        validate_features_field
+        ])
+    stock = IntegerField('Stock', validators=[
+        DataRequired(),
+        NumberRange(min=1, max=1000000, message="Stock must be at least 1")
         ])
 
 
