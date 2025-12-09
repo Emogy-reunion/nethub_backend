@@ -35,3 +35,12 @@ class LoginForm(FlaskForm):
         DataRequired(),
         Length(min=2, max=50, message='Password ust be between two and 50 characters!')
         ])
+
+
+class ProductUploadForm(FlaskForm):
+    '''
+    validates the product upload form fields
+    '''
+    name = StringField('Name', validators=[
+        DataRequired(),
+
