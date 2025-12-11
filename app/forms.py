@@ -1,7 +1,7 @@
 from flask_wtf import  FlaskForm
-from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, EqualTo, Email, Length, Regexp
-from app.utils.custom_form_validators import length_check, validate_features_field
+from wtforms import StringField, PasswordField, DecimalField, TextAreaField, IntegerField
+from wtforms.validators import DataRequired, EqualTo, Email, Length, Regexp, NumberRange, AnyOf, 
+from app.utils.custom_form_validators import length_check, validate_features_field
 
 
 class RegistrationForm(FlaskForm):
@@ -69,5 +69,3 @@ class ProductUploadForm(FlaskForm):
         DataRequired(),
         NumberRange(min=1, max=1000000, message="Stock must be at least 1")
         ])
-
-
