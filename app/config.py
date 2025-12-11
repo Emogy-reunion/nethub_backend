@@ -19,3 +19,4 @@ class Config():
     JWT_COOKIE_SAMESITE = 'None'
     JWT_ACCESS_COOKIE_NAME = "access_token_cookie"
     JWT_REFRESH_COOKIE_NAME = "refresh_token_cookie"
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
