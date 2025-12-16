@@ -53,13 +53,25 @@ class Products(db.Model):
     images = db.relationship('ProductImages', back_populates='product', lazy='selectin', cascade='all, delete')
 
     def get_preview(self):
-        return preview = {
+        return {
                 'product_id': self.id,
                 'name': self.name,
                 'price': self.price,
                 'stock': self.stock,
                 'discount': self.discount,
-                'image': self.images[0].filename if images else None
+                'image': self.images[0].filename if self.images else None
+                }
+
+    def get_full(self):
+        return {
+                'product_id': self.id,
+                'name': self.name,
+                'price': self.price,
+                'discount': self.discount,
+                'description': self.description,
+                'features': self.features,
+                'stock': self.stock,
+                'images': [image.filename for image in self.images] if self.images Else None
                 }
 
 class ProductImages(db.Model):
