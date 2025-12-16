@@ -43,6 +43,7 @@ class Products(db.Model):
     name = db.Column(db.String(100), nullable=False)
     category = db.Column(Enum('networking-devices', 'computer-accessories', name='product_category'), nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
+    discount = db.Column(db.Float, default=0)
     description = db.Column(db.Text, nullable=False)
     features = db.Column(JSONB, nullable=False, default=dict)
     stock = db.Column(db.Integer, nullable=False)
@@ -50,6 +51,38 @@ class Products(db.Model):
     updated_at = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
     user = db.relationship('Users', back_populates='products', lazy='selectin')
     images = db.relationship('ProductImages', back_populates='product', lazy='selectin', cascade='all, delete')
+
+    @property
+    def final_price(self):
+        if not self.discount or self.discount <= 0:
+            return self.price
+
+        return self.price - (self.price * Decimal(self.discount) / Decimal(100))
+
+
+    def get_preview(self):
+        return {
+                'product_id': self.id,
+                'name': self.name,
+                'price': self.price,
+                'stock': self.stock,
+                'discount': self.discount,
+                'final_price': self.final_price,
+                'image': self.images[0].filename if self.images else None
+                }
+
+    def get_full(self):
+        return {
+                'product_id': self.id,
+                'name': self.name,
+                'price': self.price,
+                'final_price': self.final_price,
+                'discount': self.discount,
+                'description': self.description,
+                'features': self.features,
+                'stock': self.stock,
+                'images': [image.filename for image in self.images] if self.images Else None
+                }
 
 class ProductImages(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
