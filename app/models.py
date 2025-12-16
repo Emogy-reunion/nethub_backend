@@ -43,6 +43,7 @@ class Products(db.Model):
     name = db.Column(db.String(100), nullable=False)
     category = db.Column(Enum('networking-devices', 'computer-accessories', name='product_category'), nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
+    discount = db.Column(db.Float, default=0)
     description = db.Column(db.Text, nullable=False)
     features = db.Column(JSONB, nullable=False, default=dict)
     stock = db.Column(db.Integer, nullable=False)
@@ -50,6 +51,16 @@ class Products(db.Model):
     updated_at = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
     user = db.relationship('Users', back_populates='products', lazy='selectin')
     images = db.relationship('ProductImages', back_populates='product', lazy='selectin', cascade='all, delete')
+
+    def get_preview(self):
+        return preview = {
+                'product_id': self.id,
+                'name': self.name,
+                'price': self.price,
+                'stock': self.stock,
+                'discount': self.discount,
+                'image': self.images[0].filename if images else None
+                }
 
 class ProductImages(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
