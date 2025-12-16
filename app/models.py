@@ -52,6 +52,14 @@ class Products(db.Model):
     user = db.relationship('Users', back_populates='products', lazy='selectin')
     images = db.relationship('ProductImages', back_populates='product', lazy='selectin', cascade='all, delete')
 
+    @property
+    def final_price(self):
+        if not self.discount or self.discount <= 0:
+            return self.price
+
+        return self.price - (self.price * Decimal(self.discount) / Decimal(100))
+
+
     def get_preview(self):
         return {
                 'product_id': self.id,
@@ -59,6 +67,7 @@ class Products(db.Model):
                 'price': self.price,
                 'stock': self.stock,
                 'discount': self.discount,
+                'final_price': self.final_price,
                 'image': self.images[0].filename if self.images else None
                 }
 
@@ -67,6 +76,7 @@ class Products(db.Model):
                 'product_id': self.id,
                 'name': self.name,
                 'price': self.price,
+                'final_price': self.final_price,
                 'discount': self.discount,
                 'description': self.description,
                 'features': self.features,
