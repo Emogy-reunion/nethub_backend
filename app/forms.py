@@ -34,7 +34,7 @@ class LoginForm(FlaskForm):
         ])
     password = PasswordField('Password:', validators=[
         DataRequired(),
-        Length(min=2, max=50, message='Password ust be between two and 50 characters!')
+        length_check(8, 50, 'Password')
         ])
 
 
@@ -68,4 +68,8 @@ class ProductUploadForm(FlaskForm):
     stock = IntegerField('Stock', validators=[
         DataRequired(),
         NumberRange(min=1, max=1000000, message="Stock must be at least 1")
+        ])
+    discount = FloatField('Discount', validators=[
+        DataRequired(),
+        NumberRange(min=0, max=100, message="Discount can't be less that 0")
         ])
