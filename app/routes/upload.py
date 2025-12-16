@@ -30,6 +30,7 @@ def upload_product():
         description = form.description.data.strip()
         features = form.features.data
         stock = form.stock.data
+        discount = form.discount.data
         images = request.files.getlist('images')
 
         if not images or len(images) < 4:
@@ -46,6 +47,7 @@ def upload_product():
                 description=description,
                 features=features,
                 stock=stock
+                discount=discount,
                 )
 
         db.session.add(new_product)
