@@ -58,8 +58,8 @@ def upload_product():
                     filename = secure_filename(image.filename)
                     file_path = (os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
-                    image.save(filepath)
-                    saved_files.append(filepath)
+                    image.save(file_path)
+                    saved_files.append(file_path)
 
                     new_image = ProductImages(
                             product_id=new_product.id,
@@ -93,10 +93,11 @@ def get_product_previews():
         per_page = int(request.args.get('per_page', 12))
         category = request.args.get('category')
 
-        paginated_results = Products.query(
-            .options(selectinload(Products.images))
-            .filter_by(category=category)
-            .paginate(page=page, per_page=per_page, error_out=False)
+        paginated_results = (
+                Products.query
+                .options(selectinload(Products.images))
+                .filter_by(category=category)
+                .paginate(page=page, per_page=per_page, error_out=False)
             )
 
         if not paginated_results.items:
@@ -120,6 +121,42 @@ def get_product_previews():
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
 
+@product_bp.route('/delete_product/<int: product_id>', methods=['DELETE'])
+@jwt_required()
+@role_required("admin")
+def delete_product(product_id):
+    '''
+    allows admins to delete products using product id
+    '''
+    try:
+        product = (
+                Products.query
+                .options(selectinload(Products.images))
+                .filter_by(id=product_id)
+                .first()
+                )
+                
+
+        if not product:
+            return jsonify({'error': 'Product not found!'}), 404
+
+        for image in product.images:
+            if image.filename:
+                absolute_path = os.path.join(
+                        current_app.root_path,
+                        image.filename
+                        )
+
+                if os.path.exists(absolute_path):
+                    os.remove(absolute_path)
+
+        db.session.delete(product)
+        db.session.commit()
+
+        return jsonify({'success': 'Product deleted successfully'}). 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
 
 
 
