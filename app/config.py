@@ -2,13 +2,14 @@
 Stores the applications configuration settings
 '''
 import os
-from python_dotenv import load_dotenv
+from dotenv import load_dotenv
+from datetime  import timedelta
 
 load_dotenv()
 
 class Config():
     SECRET_KEY=os.getenv('SECRET_KEY')
-    SQALCHEMY_DATABASE_URI=os.getenv("DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS=False
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     JWT_TOKEN_LOCATION = ['cookies']
@@ -19,4 +20,6 @@ class Config():
     JWT_COOKIE_SAMESITE = 'None'
     JWT_ACCESS_COOKIE_NAME = "access_token_cookie"
     JWT_REFRESH_COOKIE_NAME = "refresh_token_cookie"
+    UPLOAD_FOLDER = os.path.join('static', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+

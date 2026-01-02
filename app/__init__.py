@@ -24,5 +24,7 @@ def create_app():
     bcrypt.init_app(app)
     migrate.init_app(app, db)
 
+    from . import models
+
     return app
 

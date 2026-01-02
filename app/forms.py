@@ -1,6 +1,6 @@
 from flask_wtf import  FlaskForm
-from wtforms import StringField, PasswordField, DecimalField, TextAreaField, IntegerField
-from wtforms.validators import DataRequired, EqualTo, Email, Length, Regexp, NumberRange, AnyOf, 
+from wtforms import FloatField, StringField, PasswordField, DecimalField, TextAreaField, IntegerField
+from wtforms.validators import DataRequired, EqualTo, Email, Length, Regexp, NumberRange, AnyOf
 from app.utils.custom_form_validators import length_check, validate_features_field
 
 
@@ -9,7 +9,7 @@ class RegistrationForm(FlaskForm):
     validates the registration form data
     '''
     email = StringField('Email:', validators=[
-        DataRequired,
+        DataRequired(),
         Email(),
         Length(min=4, max=45, message='Email must be between 4 and 45 characters!')
         ])
@@ -24,17 +24,17 @@ class RegistrationForm(FlaskForm):
 
     confirmpassword = PasswordField('Confirm Password:', validators=[
         DataRequired(),
-        EqualTo()
+        EqualTo('password', message='Passwords do no match!')
         ])
 
 class LoginForm(FlaskForm):
-    email = StringField('Email:' validators=[
+    email = StringField('Email:', validators=[
         Email(),
         Length(min=4, max=45, message='Email must be between 4 and 45 characters!')
         ])
     password = PasswordField('Password:', validators=[
         DataRequired(),
-        Length(min=2, max=50, message='Password ust be between two and 50 characters!')
+        length_check(8, 50, 'Password')
         ])
 
 
@@ -68,4 +68,8 @@ class ProductUploadForm(FlaskForm):
     stock = IntegerField('Stock', validators=[
         DataRequired(),
         NumberRange(min=1, max=1000000, message="Stock must be at least 1")
+        ])
+    discount = FloatField('Discount', validators=[
+        DataRequired(),
+        NumberRange(min=0, max=100, message="Discount can't be less that 0")
         ])
