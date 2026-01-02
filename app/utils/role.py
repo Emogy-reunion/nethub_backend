@@ -14,16 +14,18 @@ def role_required(role):
     takes the role as an argument
     returns a decorator that can be applied to routes
     '''
+
+
     def decorator(func):
-    '''
-    takes the decorated function as an argument
-    returns a wrapper that adds role checking logic to the decorated route's function
-    '''
+        '''
+        takes the decorated function as an argument
+        returns a wrapper that adds role checking logic to the decorated route's function
+        '''
         @wraps(func)
         def wrapper(*args, **kwargs):
-        '''
-        runs before the decorated function is accessed
-        '''
+            '''
+            runs before the decorated function is accessed
+            '''
             user_id = int(get_jwt_identity())
 
             if not user_id:
