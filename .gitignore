@@ -3,6 +3,8 @@ myenv/
 
 .env
 
+migrations/
+
 static/uploads/
 
 # Byte-compiled / optimized / DLL files
