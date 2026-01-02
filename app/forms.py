@@ -24,7 +24,7 @@ class RegistrationForm(FlaskForm):
 
     confirmpassword = PasswordField('Confirm Password:', validators=[
         DataRequired(),
-        EqualTo()
+        EqualTo('password', message='Passwords do no match!')
         ])
 
 class LoginForm(FlaskForm):
