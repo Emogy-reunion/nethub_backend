@@ -1,8 +1,8 @@
-"""create initial tables
+"""create initial tables with UUID foreign keys
 
-Revision ID: 8a920c131e7a
+Revision ID: bb5f48a3b40f
 Revises: 
-Create Date: 2026-01-02 20:36:03.799481
+Create Date: 2026-01-02 20:42:09.904020
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '8a920c131e7a'
+revision = 'bb5f48a3b40f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,7 +31,7 @@ def upgrade():
     )
     op.create_table('products',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.String(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('category', sa.Enum('networking-devices', 'computer-accessories', name='product_category'), nullable=False),
     sa.Column('price', sa.Numeric(precision=10, scale=2), nullable=False),
