@@ -9,7 +9,7 @@ class RegistrationForm(FlaskForm):
     validates the registration form data
     '''
     email = StringField('Email:', validators=[
-        DataRequired,
+        DataRequired(),
         Email(),
         Length(min=4, max=45, message='Email must be between 4 and 45 characters!')
         ])
