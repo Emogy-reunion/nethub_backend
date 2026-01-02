@@ -81,7 +81,7 @@ class Products(db.Model):
                 'description': self.description,
                 'features': self.features,
                 'stock': self.stock,
-                'images': [image.filename for image in self.images] if self.images Else None
+                'images': [image.filename for image in self.images] if self.images else None
                 }
 
 class ProductImages(db.Model):
