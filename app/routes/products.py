@@ -100,10 +100,7 @@ def get_product_previews():
                 .paginate(page=page, per_page=per_page, error_out=False)
             )
 
-        if not paginated_results.items:
-            products = []
-        else:
-            products = [product.get_preview() for product in paginated_results.items]
+        products = [product.get_preview() for product in paginated_results.items] if paginated_results.items else []
 
         pagination = {
                 'next': paginated_results.next_num if paginated_results.has_next else None,
