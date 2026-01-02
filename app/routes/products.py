@@ -168,7 +168,7 @@ def delete_product(product_id):
         db.session.delete(product)
         db.session.commit()
 
-        return jsonify({'success': 'Product deleted successfully'}). 200
+        return jsonify({'success': 'Product deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
