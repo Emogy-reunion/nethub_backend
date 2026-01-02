@@ -9,10 +9,10 @@ def length_check(min_length, max_length, field_name="Field"):
         if length > max_length:
             raise ValidationError(f"{field_name} is too long. Maximum {max_length} characters allowed.")
         
-        return _length_check
+    return _length_check
 
 
-def validate_features_field(field):
+def validate_features_field(form, field):
     """
     Validates a multiline text field where each line is a feature.
     Returns a cleaned list of features.
