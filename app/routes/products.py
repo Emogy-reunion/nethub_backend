@@ -121,6 +121,24 @@ def get_product_previews():
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
 
+
+
+@product_bp.route('/get_product_details/<int:product_id>', methods=['GET'])
+def get_product_details(product_id):
+    '''
+    retrieves details about a specific product
+    '''
+    try:
+        product = Products.query.options(selectinload(Products.images)).filter_by(id=product_id).first()
+
+        product_details = product.get_full() if product else None
+
+        return jsonify({'product_details': product_details}), 200
+
+    except Exception as e:
+        return jsonify({"error": 'An unexpected error occurred. Please try again!'}), 500
+
+
 @product_bp.route('/delete_product/<int: product_id>', methods=['DELETE'])
 @jwt_required()
 @role_required("admin")
