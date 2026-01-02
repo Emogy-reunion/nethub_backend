@@ -39,7 +39,7 @@ class Users(db.Model):
 
 class Products(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.String, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     category = db.Column(Enum('networking-devices', 'computer-accessories', name='product_category'), nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
