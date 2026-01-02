@@ -136,7 +136,7 @@ def get_product_details(product_id):
         return jsonify({"error": 'An unexpected error occurred. Please try again!'}), 500
 
 
-@products_bp.route('/delete_product/<int: product_id>', methods=['DELETE'])
+@products_bp.route('/delete_product/<int:product_id>', methods=['DELETE'])
 @jwt_required()
 @role_required("admin")
 def delete_product(product_id):
