@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import TIMESTAMP, Enum
 from sqlalchemy.sql import func
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 class Users(db.Model):
     '''
