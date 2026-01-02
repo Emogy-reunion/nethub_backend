@@ -120,7 +120,7 @@ def get_product_previews():
 
 
 
-@product_bp.route('/get_product_details/<int:product_id>', methods=['GET'])
+@products_bp.route('/get_product_details/<int:product_id>', methods=['GET'])
 def get_product_details(product_id):
     '''
     retrieves details about a specific product
@@ -136,7 +136,7 @@ def get_product_details(product_id):
         return jsonify({"error": 'An unexpected error occurred. Please try again!'}), 500
 
 
-@product_bp.route('/delete_product/<int: product_id>', methods=['DELETE'])
+@products_bp.route('/delete_product/<int: product_id>', methods=['DELETE'])
 @jwt_required()
 @role_required("admin")
 def delete_product(product_id):
@@ -172,8 +172,3 @@ def delete_product(product_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
-
-
-
-
-
