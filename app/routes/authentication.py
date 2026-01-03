@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.forms import RegistrationForm
 from app.models import Users
 from app import db
+import uuid
 from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, jwt_required, get_jwt_identity
 
 
@@ -103,3 +104,28 @@ def logout():
         return response, 200
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred. Please try again!'}), 500
+
+
+
+@auth.route('/is_logged_in', methods=['GET'])
+@jwt_required()
+def is_logged_in():
+    '''
+    checks is a user is logged in
+    '''
+    try:
+        user_id = uuid.UUID(get_jwt_identity())
+
+        user = db.session.get(Users, user_id)
+
+        if not user:
+            return jsonify({'error': 'User not found!'}), 404
+
+        response = {
+                'role': user.role,
+                'success': 'User is authenticated'
+                }
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": 'An unexpected error occured. Please try again!'}), 500
