@@ -45,8 +45,8 @@ def login():
     authenticates the users
     '''
     try:
-        data = request.get_json() or {}
-        form = LoginForm(data)
+        json_data = request.get_json() or {}
+        form = LoginForm(formdata=MultiDict(json_data))
 
         if not form.validate():
             return jsonify({"errors": form.errors}), 400
@@ -130,3 +130,21 @@ def is_logged_in():
 
     except Exception as e:
         return jsonify({"error": 'An unexpected error occured. Please try again!'}), 500
+
+    @auth.route('/user_data', methods=['GET'])
+    @jwt_required()
+    def user_data():
+        try:
+            user_id = uuid.UUID(get_jwt_identity())
+
+            user = db.session.get(Users, user_id)
+            
+            if not user:
+                return jsonify({'error': 'User not found!'}), 404
+
+            data = {
+                    'email': user.email
+                    }
+            return jsonify(data), 200
+        except Exception as E:
+            return jsonify({"error": 'An unexpected error occured. Please try again!'}), 500
