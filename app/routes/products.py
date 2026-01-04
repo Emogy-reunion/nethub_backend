@@ -5,7 +5,6 @@ from app import db
 from app.forms import ProductUploadForm
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.role import role_required
-from app.utils.check_filename import check_file_extension
 from werkzeug.utils import secure_filename
 import os
 
