@@ -144,7 +144,8 @@ def user_data():
             return jsonify({'error': 'User not found!'}), 404
 
         data = {
-                'email': user.email
+                'email': user.email,
+                'role': user.role
                 }
         return jsonify(data), 200
     except Exception as E:
