@@ -28,7 +28,7 @@ class Users(db.Model):
         '''
         hashes the password for security reasons
         '''
-        return bcrypt.generate_password_hash(password)
+        return bcrypt.generate_password_hash(password).decode("utf-8")
 
     def check_passwordhash(self, password):
         '''
