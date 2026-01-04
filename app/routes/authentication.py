@@ -3,6 +3,7 @@ from app.forms import RegistrationForm
 from app.models import Users
 from app import db
 import uuid
+from werkzeug.datastructures import MultiDict
 from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, jwt_required, get_jwt_identity
 
 
@@ -15,8 +16,8 @@ def register():
     allows users to create accounts
     '''
     try:
-        data = request.get_json() or {}
-        form = RegistrationForm(data)
+        json_data = request.get_json() or {}
+        form = RegistrationForm(formdata=MultiDict(json_data))
 
         if not form.validate():
             return jsonify({'errors': form.errors}), 400
