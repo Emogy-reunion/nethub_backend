@@ -54,7 +54,7 @@ def upload_product():
             db.session.flush()
 
             for image in images:
-                if image and check_file_extension(image.filename):
+                if image:
                     filename = secure_filename(image.filename)
                     file_path = (os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
@@ -73,7 +73,7 @@ def upload_product():
                              os.remove(file)
 
                      db.session.rollback()
-                     return jsonify({"error": 'One or more images are missing or have an invalid file extension.'}), 400
+                     return jsonify({"error": 'One or more images are missing'}), 400
             db.session.commit()
             return jsonify({"success": 'Product uploaded successfully!'}), 201
         except Exception as e:
