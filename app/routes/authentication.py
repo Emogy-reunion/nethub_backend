@@ -131,20 +131,20 @@ def is_logged_in():
     except Exception as e:
         return jsonify({"error": 'An unexpected error occured. Please try again!'}), 500
 
-    @auth.route('/user_data', methods=['GET'])
-    @jwt_required()
-    def user_data():
-        try:
-            user_id = uuid.UUID(get_jwt_identity())
+@auth.route('/user_data', methods=['GET'])
+@jwt_required()
+def user_data():
+    try:
+        user_id = uuid.UUID(get_jwt_identity())
 
-            user = db.session.get(Users, user_id)
+        user = db.session.get(Users, user_id)
             
-            if not user:
-                return jsonify({'error': 'User not found!'}), 404
+        if not user:
+            return jsonify({'error': 'User not found!'}), 404
 
-            data = {
-                    'email': user.email
-                    }
-            return jsonify(data), 200
-        except Exception as E:
-            return jsonify({"error": 'An unexpected error occured. Please try again!'}), 500
+        data = {
+                'email': user.email
+                }
+        return jsonify(data), 200
+    except Exception as E:
+        return jsonify({"error": 'An unexpected error occured. Please try again!'}), 500
