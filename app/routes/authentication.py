@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.forms import RegistrationForm
+from app.forms import RegistrationForm, LoginForm
 from app.models import Users
 from app import db
 import uuid
