@@ -22,7 +22,7 @@ class Users(db.Model):
         instantiates a user object
         '''
         self.email = email
-        self.passwordhash = self.generate_passwordhash(password)
+        self.passwordhash = self.generate_passwordhash(password).decode("utf-8")
 
     def generate_passwordhash(self, password):
         '''
