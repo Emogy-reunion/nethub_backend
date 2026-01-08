@@ -2,18 +2,14 @@
 Stores the applications configuration settings
 '''
 import os
-<<<<<<< HEAD
 from dotenv import load_dotenv
 from datetime  import timedelta
-=======
-from python_dotenv import load_dotenv
->>>>>>> feature/products
 
 load_dotenv()
 
 class Config():
     SECRET_KEY=os.getenv('SECRET_KEY')
-    SQALCHEMY_DATABASE_URI=os.getenv("DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS=False
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     JWT_TOKEN_LOCATION = ['cookies']

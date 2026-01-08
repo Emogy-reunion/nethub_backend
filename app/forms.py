@@ -32,11 +32,6 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField('Email:', validators=[
-        EqualTo()
-        ])
-
-class LoginForm(FlaskForm):
-    email = StringField('Email:' validators=[
         Email(),
         Length(min=4, max=45, message='Email must be between 4 and 45 characters!')
         ])
