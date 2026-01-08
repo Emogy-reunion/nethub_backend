@@ -6,6 +6,7 @@ from flask_jwt_extended import get_jwt_identity
 from app.models import Users
 from app import db
 from flask import jsonify
+import uuid
 
 
 def role_required(role):
@@ -26,7 +27,7 @@ def role_required(role):
             '''
             runs before the decorated function is accessed
             '''
-            user_id = int(get_jwt_identity())
+            user_id = uuid.UUID(get_jwt_identity())
 
             if not user_id:
                 return jsonify({'error': 'Missing or invalid token!'}), 401

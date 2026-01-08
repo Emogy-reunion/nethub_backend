@@ -23,11 +23,13 @@ def upload_product():
             form = ProductUploadForm(data)
 
             if not form.validate():
+                print(form.errors)
                 return jsonify({"errors": form.errors}), 400
 
             name = form.name.data.strip().lower()
             category = form.category.data.strip().lower()
             price = form.price.data
+            discount = form.discount.data
             description = form.description.data.strip()
             features = form.features.data
             stock = form.stock.data
@@ -44,6 +46,7 @@ def upload_product():
                     name=name,
                     category=category,
                     price=price,
+                    discount=discount,
                     description=description,
                     features=features,
                     stock=stock

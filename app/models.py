@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy import TIMESTAMP, Enum
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
+from decimal import Decimal
 
 class Users(db.Model):
     '''
