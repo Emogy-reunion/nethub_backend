@@ -5,7 +5,6 @@ from app import db
 from app.forms import ProductUploadForm
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.role import role_required
-from app.utils.check_filename import check_file_extension
 from werkzeug.utils import secure_filename
 import os
 
@@ -54,12 +53,12 @@ def upload_product():
             db.session.flush()
 
             for image in images:
-                if image and check_file_extension(image.filename):
+                if image:
                     filename = secure_filename(image.filename)
                     file_path = (os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
-                    image.save(filepath)
-                    saved_files.append(filepath)
+                    image.save(file_path)
+                    saved_files.append(file_path)
 
                     new_image = ProductImages(
                             product_id=new_product.id,
@@ -73,7 +72,7 @@ def upload_product():
                              os.remove(file)
 
                      db.session.rollback()
-                     return jsonify({"error": 'One or more images are missing or have an invalid file extension.'}), 400
+                     return jsonify({"error": 'One or more images are missing'}), 400
             db.session.commit()
             return jsonify({"success": 'Product uploaded successfully!'}), 201
         except Exception as e:
@@ -93,16 +92,14 @@ def get_product_previews():
         per_page = int(request.args.get('per_page', 12))
         category = request.args.get('category')
 
-        paginated_results = Products.query(
-            .options(selectinload(Products.images))
-            .filter_by(category=category)
-            .paginate(page=page, per_page=per_page, error_out=False)
+        paginated_results = (
+                Products.query
+                .options(selectinload(Products.images))
+                .filter_by(category=category)
+                .paginate(page=page, per_page=per_page, error_out=False)
             )
 
-        if not paginated_results.items:
-            products = []
-        else:
-            products = [product.get_preview() for product in paginated_results.items]
+        products = [product.get_preview() for product in paginated_results.items] if paginated_results.items else []
 
         pagination = {
                 'next': paginated_results.next_num if paginated_results.has_next else None,
@@ -122,6 +119,55 @@ def get_product_previews():
 
 
 
+@products_bp.route('/get_product_details/<int:product_id>', methods=['GET'])
+def get_product_details(product_id):
+    '''
+    retrieves details about a specific product
+    '''
+    try:
+        product = Products.query.options(selectinload(Products.images)).filter_by(id=product_id).first()
+
+        product_details = product.get_full() if product else None
+
+        return jsonify({'product_details': product_details}), 200
+
+    except Exception as e:
+        return jsonify({"error": 'An unexpected error occurred. Please try again!'}), 500
 
 
+@products_bp.route('/delete_product/<int:product_id>', methods=['DELETE'])
+@jwt_required()
+@role_required("admin")
+def delete_product(product_id):
+    '''
+    allows admins to delete products using product id
+    '''
+    try:
+        product = (
+                Products.query
+                .options(selectinload(Products.images))
+                .filter_by(id=product_id)
+                .first()
+                )
+                
 
+        if not product:
+            return jsonify({'error': 'Product not found!'}), 404
+
+        for image in product.images:
+            if image.filename:
+                absolute_path = os.path.join(
+                        current_app.root_path,
+                        image.filename
+                        )
+
+                if os.path.exists(absolute_path):
+                    os.remove(absolute_path)
+
+        db.session.delete(product)
+        db.session.commit()
+
+        return jsonify({'success': 'Product deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
