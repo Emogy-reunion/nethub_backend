@@ -7,6 +7,8 @@ from datetime  import timedelta
 
 load_dotenv()
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
 class Config():
     SECRET_KEY=os.getenv('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URI")
@@ -20,7 +22,9 @@ class Config():
     JWT_COOKIE_SAMESITE = 'None'
     JWT_ACCESS_COOKIE_NAME = "access_token_cookie"
     JWT_REFRESH_COOKIE_NAME = "refresh_token_cookie"
-    UPLOAD_FOLDER = os.path.join('static', 'uploads')
+    JWT_CSRF_CHECK_FORM = False  # default
+    JWT_CSRF_CHECK_HEADERS = True
+    UPLOAD_FOLDER =  os.path.join(BASE_DIR, 'static', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
     ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')

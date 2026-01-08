@@ -3,7 +3,7 @@ from wtforms import FloatField, StringField, PasswordField, DecimalField, TextAr
 from wtforms.validators import DataRequired, EqualTo, Email, Length, Regexp, NumberRange, AnyOf
 from flask_wtf.file import FileAllowed
 from wtforms import StringField, PasswordField, DecimalField, TextAreaField, IntegerField
-from wtforms.validators import DataRequired, EqualTo, Email, Length, Regexp, NumberRange, AnyOf
+from wtforms.validators import DataRequired, InputRequired, EqualTo, Email, Length, Regexp, NumberRange, AnyOf
 from app.utils.custom_form_validators import length_check, validate_features_field
 
 
@@ -45,6 +45,9 @@ class ProductUploadForm(FlaskForm):
     '''
     validates the product upload form fields
     '''
+    class Meta:
+        csrf = False
+
     name = StringField('Name', validators=[
         DataRequired(),
         length_check(4, 50, 'Name')
@@ -57,7 +60,7 @@ class ProductUploadForm(FlaskForm):
                          places=2,
                          rounding=None,
                          validators=[
-                             DataRequired(),
+                             InputRequired(),
                              NumberRange(min=1, max=1000000, message="Price must be at least 1")
                         ])
     description = TextAreaField('Description', validators=[
@@ -69,11 +72,11 @@ class ProductUploadForm(FlaskForm):
         validate_features_field
         ])
     stock = IntegerField('Stock', validators=[
-        DataRequired(),
+        InputRequired(),
         NumberRange(min=1, max=1000000, message="Stock must be at least 1")
         ])
     discount = FloatField('Discount', validators=[
-        DataRequired(),
+        InputRequired(),
         NumberRange(min=0, max=100, message="Discount can't be less that 0")
         ])
     images = MultipleFileField('Images', validators=[
