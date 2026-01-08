@@ -86,9 +86,9 @@ def refresh():
 
         #create a new access token with the user id
         access_token = create_access_token(identity=user_id)
-        response = ({'success': 'Access token refreshed successfully'})
+        response = jsonify({'success': 'Access token refreshed successfully'})
         set_access_cookies(response, access_token)
-        return response, 201
+        return response, 200
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred. Please try again!'}), 500
 
