@@ -2,14 +2,18 @@
 Stores the applications configuration settings
 '''
 import os
+<<<<<<< HEAD
 from dotenv import load_dotenv
 from datetime  import timedelta
+=======
+from python_dotenv import load_dotenv
+>>>>>>> feature/products
 
 load_dotenv()
 
 class Config():
     SECRET_KEY=os.getenv('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URI")
+    SQALCHEMY_DATABASE_URI=os.getenv("DATABASE_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS=False
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     JWT_TOKEN_LOCATION = ['cookies']
@@ -24,3 +28,4 @@ class Config():
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
     ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
