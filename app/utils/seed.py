@@ -21,6 +21,6 @@ def create_initial_admin():
         print('Admin created successfully!')
         return
     except Exception as e:
-        db.session.rollback
+        db.session.rollback()
         print(f"Error creating admin: {e}")
 
