@@ -7,7 +7,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.role import role_required
 from werkzeug.utils import secure_filename
 import os
-
+import uuid
 
 products_bp = Blueprint('products_bp', __name__)
 
@@ -17,17 +17,19 @@ products_bp = Blueprint('products_bp', __name__)
 @role_required('admin')
 def upload_product():
         try:
-            current_user_id = get_jwt_identity()
-            saved_files = []
+            current_user_id = uuid.UUID(get_jwt_identity())
+            saved_files = [] 
             data = request.form
             form = ProductUploadForm(data)
 
             if not form.validate():
+                print(form.errors)
                 return jsonify({"errors": form.errors}), 400
 
             name = form.name.data.strip().lower()
             category = form.category.data.strip().lower()
             price = form.price.data
+            discount = form.discount.data
             description = form.description.data.strip()
             features = form.features.data
             stock = form.stock.data
@@ -44,6 +46,7 @@ def upload_product():
                     name=name,
                     category=category,
                     price=price,
+                    discount=discount,
                     description=description,
                     features=features,
                     stock=stock

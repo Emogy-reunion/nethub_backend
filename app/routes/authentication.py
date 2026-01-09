@@ -154,4 +154,4 @@ def user_data():
 @auth.route('/get_csrf_token', methods=['GET'])
 def get_csrf_token():
     token = generate_csrf()
-    return jsonify({"csrf_token": token})
+    return jsonify({"csrf_token": token}), 200

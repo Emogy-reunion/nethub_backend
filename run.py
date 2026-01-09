@@ -10,7 +10,6 @@ with app.app_context():
     create_upload_folder()
     create_initial_admin()
 
-
 app.register_blueprint(auth, url_prefix='/api')
 app.register_blueprint(products_bp, url_prefix='/api')
 
