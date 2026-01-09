@@ -23,7 +23,7 @@ class Users(db.Model):
         instantiates a user object
         '''
         self.email = email
-        self.passwordhash = self.generate_passwordhash(password).decode("utf-8")
+        self.passwordhash = self.generate_passwordhash(password)
 
     def generate_passwordhash(self, password):
         '''
@@ -64,7 +64,7 @@ class Products(db.Model):
     def get_preview(self):
         return {
                 'product_id': self.id,
-                'name': self.name,
+                'name': self.name.title(),
                 'price': self.price,
                 'stock': self.stock,
                 'discount': self.discount,
@@ -75,7 +75,7 @@ class Products(db.Model):
     def get_full(self):
         return {
                 'product_id': self.id,
-                'name': self.name,
+                'name': self.name.title(),
                 'price': self.price,
                 'final_price': self.final_price,
                 'discount': self.discount,
