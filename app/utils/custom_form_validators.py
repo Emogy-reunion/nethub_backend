@@ -13,7 +13,6 @@ def length_check(min_length, max_length, field_name="Field"):
 
 
 def validate_features_field(form, field):
-
     """
     Validates a multiline text field where each line is a feature.
     Returns a cleaned list of features.

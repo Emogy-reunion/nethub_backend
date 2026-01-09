@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, send_from_directory
 from app.models import Products, ProductImages
 from sqlalchemy.orm import selectinload
+from sqlalchemy import desc
 from app import db
 from app.forms import ProductUploadForm
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -23,7 +24,6 @@ def upload_product():
             form = ProductUploadForm(data)
 
             if not form.validate():
-                print(form.errors)
                 return jsonify({"errors": form.errors}), 400
 
             name = form.name.data.strip().lower()
@@ -95,12 +95,14 @@ def get_product_previews():
         per_page = int(request.args.get('per_page', 12))
         category = request.args.get('category')
 
+
         paginated_results = (
-                Products.query
-                .options(selectinload(Products.images))
-                .filter_by(category=category)
-                .paginate(page=page, per_page=per_page, error_out=False)
-            )
+                    Products.query
+                    .options(selectinload(Products.images))
+                    .filter(Products.category == category)      # filter by Enum
+                    .order_by(desc(Products.created_at))         # order descending
+                    .paginate(page=page, per_page=per_page, error_out=False)
+                    )
 
         products = [product.get_preview() for product in paginated_results.items] if paginated_results.items else []
 
@@ -174,3 +176,7 @@ def delete_product(product_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
+
+@products_bp.route('/send_image/<filename>', methods=['GET'])
+def send_image(filename):
+    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)

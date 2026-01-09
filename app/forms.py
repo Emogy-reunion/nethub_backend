@@ -1,8 +1,6 @@
 from flask_wtf import  FlaskForm
 from wtforms import FloatField, StringField, PasswordField, DecimalField, TextAreaField, IntegerField, MultipleFileField
-from wtforms.validators import DataRequired, EqualTo, Email, Length, Regexp, NumberRange, AnyOf
 from flask_wtf.file import FileAllowed
-from wtforms import StringField, PasswordField, DecimalField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired, InputRequired, EqualTo, Email, Length, Regexp, NumberRange, AnyOf
 from app.utils.custom_form_validators import length_check, validate_features_field
 

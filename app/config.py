@@ -28,4 +28,3 @@ class Config():
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
     ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
