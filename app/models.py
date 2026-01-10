@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy import TIMESTAMP, Enum
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
+from decimal import Decimal
 
 class Users(db.Model):
     '''
@@ -17,7 +18,7 @@ class Users(db.Model):
     registered_on = db.Column(TIMESTAMP(timezone=True), server_default=func.now(), nullable=False)
     products = db.relationship('Products', back_populates='user', lazy='selectin')
 
-    def __init__(email, password):
+    def __init__(self, email, password):
         '''
         instantiates a user object
         '''
@@ -28,7 +29,7 @@ class Users(db.Model):
         '''
         hashes the password for security reasons
         '''
-        return bcrypt.generate_password_hash(password)
+        return bcrypt.generate_password_hash(password).decode("utf-8")
 
     def check_passwordhash(self, password):
         '''
@@ -63,7 +64,7 @@ class Products(db.Model):
     def get_preview(self):
         return {
                 'product_id': self.id,
-                'name': self.name,
+                'name': self.name.title(),
                 'price': self.price,
                 'stock': self.stock,
                 'discount': self.discount,
@@ -74,7 +75,7 @@ class Products(db.Model):
     def get_full(self):
         return {
                 'product_id': self.id,
-                'name': self.name,
+                'name': self.name.title(),
                 'price': self.price,
                 'final_price': self.final_price,
                 'discount': self.discount,

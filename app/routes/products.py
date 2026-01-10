@@ -1,14 +1,14 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, send_from_directory
 from app.models import Products, ProductImages
 from sqlalchemy.orm import selectinload
+from sqlalchemy import desc
 from app import db
 from app.forms import ProductUploadForm
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.role import role_required
-from app.utils.check_filename import check_file_extension
 from werkzeug.utils import secure_filename
 import os
-
+import uuid
 
 products_bp = Blueprint('products_bp', __name__)
 
@@ -18,8 +18,8 @@ products_bp = Blueprint('products_bp', __name__)
 @role_required('admin')
 def upload_product():
         try:
-            current_user_id = get_jwt_identity()
-            saved_files = []
+            current_user_id = uuid.UUID(get_jwt_identity())
+            saved_files = [] 
             data = request.form
             form = ProductUploadForm(data)
 
@@ -29,6 +29,7 @@ def upload_product():
             name = form.name.data.strip().lower()
             category = form.category.data.strip().lower()
             price = form.price.data
+            discount = form.discount.data
             description = form.description.data.strip()
             features = form.features.data
             stock = form.stock.data
@@ -45,6 +46,7 @@ def upload_product():
                     name=name,
                     category=category,
                     price=price,
+                    discount=discount,
                     description=description,
                     features=features,
                     stock=stock
@@ -54,7 +56,7 @@ def upload_product():
             db.session.flush()
 
             for image in images:
-                if image and check_file_extension(image.filename):
+                if image:
                     filename = secure_filename(image.filename)
                     file_path = (os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
@@ -73,7 +75,7 @@ def upload_product():
                              os.remove(file)
 
                      db.session.rollback()
-                     return jsonify({"error": 'One or more images are missing or have an invalid file extension.'}), 400
+                     return jsonify({"error": 'One or more images are missing'}), 400
             db.session.commit()
             return jsonify({"success": 'Product uploaded successfully!'}), 201
         except Exception as e:
@@ -93,12 +95,14 @@ def get_product_previews():
         per_page = int(request.args.get('per_page', 12))
         category = request.args.get('category')
 
+
         paginated_results = (
-                Products.query
-                .options(selectinload(Products.images))
-                .filter_by(category=category)
-                .paginate(page=page, per_page=per_page, error_out=False)
-            )
+                    Products.query
+                    .options(selectinload(Products.images))
+                    .filter(Products.category == category)      # filter by Enum
+                    .order_by(desc(Products.created_at))         # order descending
+                    .paginate(page=page, per_page=per_page, error_out=False)
+                    )
 
         products = [product.get_preview() for product in paginated_results.items] if paginated_results.items else []
 
@@ -172,3 +176,7 @@ def delete_product(product_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
+
+@products_bp.route('/send_image/<filename>', methods=['GET'])
+def send_image(filename):
+    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)

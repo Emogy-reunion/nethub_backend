@@ -1,7 +1,10 @@
 from flask import Blueprint, request, jsonify
-from app.forms import RegistrationForm
+from app.forms import RegistrationForm, LoginForm
 from app.models import Users
 from app import db
+import uuid
+from werkzeug.datastructures import MultiDict
+from flask_wtf.csrf import generate_csrf
 from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, jwt_required, get_jwt_identity
 
 
@@ -14,8 +17,8 @@ def register():
     allows users to create accounts
     '''
     try:
-        data = request.get_json() or {}
-        form = RegistrationForm(data)
+        json_data = request.get_json() or {}
+        form = RegistrationForm(formdata=MultiDict(json_data))
 
         if not form.validate():
             return jsonify({'errors': form.errors}), 400
@@ -43,8 +46,8 @@ def login():
     authenticates the users
     '''
     try:
-        data = request.get_json() or {}
-        form = LoginForm(data)
+        json_data = request.get_json() or {}
+        form = LoginForm(formdata=MultiDict(json_data))
 
         if not form.validate():
             return jsonify({"errors": form.errors}), 400
@@ -66,7 +69,7 @@ def login():
 
             response = jsonify({'success': 'Logged in successfully. Welcome!'})
             set_access_cookies(response, access_token)
-            set_refresh_token(response, refresh_token)
+            set_refresh_cookies(response, refresh_token)
             return response, 200
         else:
             return jsonify({'error': 'Incorrect credentials. Please try again!'}), 400
@@ -83,9 +86,9 @@ def refresh():
 
         #create a new access token with the user id
         access_token = create_access_token(identity=user_id)
-        response = ({'success': 'Access token refreshed successfully'})
+        response = jsonify({'success': 'Access token refreshed successfully'})
         set_access_cookies(response, access_token)
-        return response, 201
+        return response, 200
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred. Please try again!'}), 500
 
@@ -103,3 +106,52 @@ def logout():
         return response, 200
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred. Please try again!'}), 500
+
+
+
+@auth.route('/is_logged_in', methods=['GET'])
+@jwt_required()
+def is_logged_in():
+    '''
+    checks is a user is logged in
+    '''
+    try:
+        user_id = uuid.UUID(get_jwt_identity())
+
+        user = db.session.get(Users, user_id)
+
+        if not user:
+            return jsonify({'error': 'User not found!'}), 404
+
+        response = {
+                'role': user.role,
+                'success': 'User is authenticated'
+                }
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": 'An unexpected error occured. Please try again!'}), 500
+
+@auth.route('/user_data', methods=['GET'])
+@jwt_required()
+def user_data():
+    try:
+        user_id = uuid.UUID(get_jwt_identity())
+
+        user = db.session.get(Users, user_id)
+            
+        if not user:
+            return jsonify({'error': 'User not found!'}), 404
+
+        data = {
+                'email': user.email,
+                'role': user.role
+                }
+        return jsonify(data), 200
+    except Exception as E:
+        return jsonify({"error": 'An unexpected error occured. Please try again!'}), 500
+
+@auth.route('/get_csrf_token', methods=['GET'])
+def get_csrf_token():
+    token = generate_csrf()
+    return jsonify({"csrf_token": token}), 200
