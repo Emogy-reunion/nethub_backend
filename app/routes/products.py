@@ -35,8 +35,8 @@ def upload_product():
             stock = form.stock.data
             images = request.files.getlist('images')
 
-            if not images or len(images) < 4:
-                return jsonify({'error': 'Please upload at least 4 images to showcase the product clearly'}), 400
+            if not images or len(images) < 3:
+                return jsonify({'error': 'Please upload at least 3 images to showcase the product clearly'}), 400
 
             if images and len(images) > 6:
                 return jsonify({'error': 'You can upload a maximum of 6 images. Choose the most relevant ones.'}), 400
