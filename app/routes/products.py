@@ -94,15 +94,18 @@ def get_product_previews():
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 12))
         category = request.args.get('category')
+        
 
+        query = Products.query.options(selectinload(Products.images))
 
-        paginated_results = (
-                    Products.query
-                    .options(selectinload(Products.images))
-                    .filter(Products.category == category)      # filter by Enum
+        if category:
+            query = query.filter(Products.category == category)
+
+        paginated_results = (query
                     .order_by(desc(Products.created_at))         # order descending
                     .paginate(page=page, per_page=per_page, error_out=False)
                     )
+
 
         products = [product.get_preview() for product in paginated_results.items] if paginated_results.items else []
 
