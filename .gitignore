@@ -3,7 +3,9 @@ myenv/
 
 .env
 
-static/uploads/
+migrations/
+
+app/static/uploads/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
