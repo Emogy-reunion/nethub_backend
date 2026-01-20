@@ -9,8 +9,48 @@ from app.utils.role import role_required
 from werkzeug.utils import secure_filename
 import os
 import uuid
+from PIL import Image
+from io import BytesIO
+from threading import Thread, Lock
 
 products_bp = Blueprint('products_bp', __name__)
+
+def process_image(image_bytes_io, save_folder, result_list, lock):
+    try:
+        img = Image.open(image_bytes_io)
+
+        target_width, target_height = 800, 600
+        original_width, original_height = img.size
+
+        scale = min(target_width / original_width, target_height / original_height)
+
+        new_width = int(original_width * scale)
+        new_height = int(original_height * scale)
+
+        img = img.resize((new_width, new_height), Image.LANCZOS)
+
+        if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
+            img = img.convert("RGBA")
+            canvas = Image.new("RGBA", (target_width, target_height), (255, 255, 255, 255))
+            x_offset = (target_width - new_width) // 2
+            y_offset = (target_height - new_height) // 2
+            canvas.paste(img, (x_offset, y_offset), mask=img)
+            canvas = canvas.convert("RGB")  # final JPEG must be RGB
+        else:
+            canvas = Image.new("RGB", (target_width, target_height), (255, 255, 255))
+            x_offset = (target_width - new_width) // 2
+            y_offset = (target_height - new_height) // 2
+            canvas.paste(img, (x_offset, y_offset))
+
+        # Save as JPEG
+        filename = secure_filename(f"{uuid.uuid4().hex}.jpg")
+        file_path = os.path.join(save_folder, filename)
+        canvas.save(file_path, format="JPEG", quality=95)  # quality optional
+
+        with lock:
+            result_list.append((filename, file_path))
+    except Exception as e:
+        print(f"Error processing image: {e}")
 
 
 @products_bp.route('/upload_product', methods=['POST'])
@@ -19,7 +59,11 @@ products_bp = Blueprint('products_bp', __name__)
 def upload_product():
         try:
             current_user_id = uuid.UUID(get_jwt_identity())
-            saved_files = [] 
+            saved_files = []
+            threads = []
+            processed_files = []
+            lock = Lock()
+
             data = request.form
             form = ProductUploadForm(data)
 
@@ -57,25 +101,29 @@ def upload_product():
 
             for image in images:
                 if image:
-                    filename = secure_filename(image.filename)
-                    file_path = (os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
-                    image.save(file_path)
-                    saved_files.append(file_path)
-
-                    new_image = ProductImages(
-                            product_id=new_product.id,
-                            filename=filename
-                            )
-                    db.session.add(new_image)
+                    img_bytes = BytesIO(image.read())
+                    img_bytes.seek(0)
+                    t = Thread(target=process_image, args=(img_bytes, current_app.config['UPLOAD_FOLDER'], processed_files, lock))
+                    t.start()
+                    threads.append(t)
                 else:
                      #remove already saved files
-                     for file in saved_files:
-                         if os.path.exists(file):
-                             os.remove(file)
+                     for _, file_path in processed_files:
+                         if os.path.exists(file_path):
+                             os.remove(file_path)
 
                      db.session.rollback()
                      return jsonify({"error": 'One or more images are missing'}), 400
+
+            for t in threads:
+                t.join()
+
+
+            for filename, file_path in processed_files:
+                new_image = ProductImages(product_id=new_product.id, filename=filename)
+                db.session.add(new_image)
+
             db.session.commit()
             return jsonify({"success": 'Product uploaded successfully!'}), 201
         except Exception as e:
