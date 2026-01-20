@@ -35,8 +35,8 @@ def upload_product():
             stock = form.stock.data
             images = request.files.getlist('images')
 
-            if not images or len(images) < 4:
-                return jsonify({'error': 'Please upload at least 4 images to showcase the product clearly'}), 400
+            if not images or len(images) < 3:
+                return jsonify({'error': 'Please upload at least 3 images to showcase the product clearly'}), 400
 
             if images and len(images) > 6:
                 return jsonify({'error': 'You can upload a maximum of 6 images. Choose the most relevant ones.'}), 400
@@ -94,15 +94,18 @@ def get_product_previews():
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 12))
         category = request.args.get('category')
+        
 
+        query = Products.query.options(selectinload(Products.images))
 
-        paginated_results = (
-                    Products.query
-                    .options(selectinload(Products.images))
-                    .filter(Products.category == category)      # filter by Enum
+        if category:
+            query = query.filter(Products.category == category)
+
+        paginated_results = (query
                     .order_by(desc(Products.created_at))         # order descending
                     .paginate(page=page, per_page=per_page, error_out=False)
                     )
+
 
         products = [product.get_preview() for product in paginated_results.items] if paginated_results.items else []
 
