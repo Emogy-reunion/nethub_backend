@@ -71,6 +71,7 @@ def upload_product():
                 return jsonify({"errors": form.errors}), 400
 
             name = form.name.data.strip().lower()
+            group = form.group.strip().lower()
             category = form.category.data.strip().lower()
             price = form.price.data
             discount = form.discount.data
@@ -88,6 +89,7 @@ def upload_product():
             new_product = Products(
                     user_id=current_user_id,
                     name=name,
+                    group=group,
                     category=category,
                     price=price,
                     discount=discount,
