@@ -5,6 +5,14 @@ from wtforms.validators import DataRequired, InputRequired, EqualTo, Email, Leng
 from app.utils.custom_form_validators import length_check, validate_features_field
 
 
+GROUPS = [
+            "networking-equipment",
+            "structured-cabling",
+            "audio-visual",
+            "fibre-optic",
+            "accessories-tools"
+        ]
+
 class RegistrationForm(FlaskForm):
     '''
     validates the registration form data
@@ -50,10 +58,14 @@ class ProductUploadForm(FlaskForm):
         DataRequired(),
         length_check(4, 50, 'Name')
         ])
-    category = StringField('Category', validators=[
-        DataRequired(),
-        AnyOf(['networking-devices', 'computer-accessories'], message='Please select a valid category.')
-        ])
+    group = StringField(
+            'Group',
+            validators=[
+                DataRequired(),
+                AnyOf(GROUPS, message="Please select a valid group.")
+                ]
+            )
+    category = category = StringField('Category', validators=[Length(min=4, max=45, message="Category can't be longer that 50 characters!")])
     price = DecimalField('Price',
                          places=2,
                          rounding=None,
@@ -63,7 +75,7 @@ class ProductUploadForm(FlaskForm):
                         ])
     description = TextAreaField('Description', validators=[
         DataRequired(),
-        length_check(80, 250, 'Description')
+        length_check(80, 800, 'Description')
         ])
     features = TextAreaField('Features', validators=[
         DataRequired(),
