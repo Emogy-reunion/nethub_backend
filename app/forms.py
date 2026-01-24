@@ -65,7 +65,7 @@ class ProductUploadForm(FlaskForm):
                 AnyOf(GROUPS, message="Please select a valid group.")
                 ]
             )
-    category = category = StringField('Category', validators=[Length(min=4, max=45, message="Category can't be longer that 50 characters!")])
+    category = category = StringField('Category', validators=[Length(min=4, max=100, message="Category can't be longer that 100 characters!")])
     price = DecimalField('Price',
                          places=2,
                          rounding=None,
