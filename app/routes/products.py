@@ -71,7 +71,7 @@ def upload_product():
                 return jsonify({"errors": form.errors}), 400
 
             name = form.name.data.strip().lower()
-            group = form.group.strip().lower()
+            group = form.group.data.strip().lower()
             category = form.category.data.strip().lower()
             price = form.price.data
             discount = form.discount.data
@@ -129,6 +129,7 @@ def upload_product():
             db.session.commit()
             return jsonify({"success": 'Product uploaded successfully!'}), 201
         except Exception as e:
+            print(e)
             db.session.rollback()
             return jsonify({'error': 'An unexpected error occurred. Please try again.'}), 500
 
@@ -143,10 +144,15 @@ def get_product_previews():
     try:
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 12))
+
+        group = request.args.get('group')
         category = request.args.get('category')
         
 
         query = Products.query.options(selectinload(Products.images))
+
+        if group:
+            query = query.filter(Products.group == group)
 
         if category:
             query = query.filter(Products.category == category)
@@ -173,6 +179,7 @@ def get_product_previews():
             }), 200
 
     except Exception as e:
+        print(e);
         return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
 
 
