@@ -129,7 +129,6 @@ def upload_product():
             db.session.commit()
             return jsonify({"success": 'Product uploaded successfully!'}), 201
         except Exception as e:
-            print(e)
             db.session.rollback()
             return jsonify({'error': 'An unexpected error occurred. Please try again.'}), 500
 
@@ -179,7 +178,6 @@ def get_product_previews():
             }), 200
 
     except Exception as e:
-        print(e);
         return jsonify({'error': 'An unexpected error occurred. Please try again'}), 500
 
 
