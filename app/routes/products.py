@@ -71,6 +71,7 @@ def upload_product():
                 return jsonify({"errors": form.errors}), 400
 
             name = form.name.data.strip().lower()
+            group = form.group.data.strip().lower()
             category = form.category.data.strip().lower()
             price = form.price.data
             discount = form.discount.data
@@ -88,6 +89,7 @@ def upload_product():
             new_product = Products(
                     user_id=current_user_id,
                     name=name,
+                    group=group,
                     category=category,
                     price=price,
                     discount=discount,
@@ -141,10 +143,15 @@ def get_product_previews():
     try:
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 12))
+
+        group = request.args.get('group')
         category = request.args.get('category')
         
 
         query = Products.query.options(selectinload(Products.images))
+
+        if group:
+            query = query.filter(Products.group == group)
 
         if category:
             query = query.filter(Products.category == category)

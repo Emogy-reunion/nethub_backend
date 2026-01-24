@@ -42,7 +42,13 @@ class Products(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("users.id"), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    category = db.Column(Enum('networking-devices', 'computer-accessories', name='product_category'), nullable=False)
+    group = db.Column(
+            Enum(
+                'networking-equipment', 'structured-cabling', 'audio-visual', 'fibre-optic', 'accessories-tools', name='product_group'
+                ), 
+            nullable=False
+            )
+    category = db.Column(db.String(150), nullable=True)
     price = db.Column(db.Numeric(10, 2), nullable=False)
     discount = db.Column(db.Float, default=0)
     description = db.Column(db.Text, nullable=False)
