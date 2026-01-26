@@ -57,6 +57,7 @@
 │   ├── forms.py           # Form classes and validations
 │   └── models.py          # Database models
 └── migrations/            # Database migration history
+```
 
 ## Installation
 * To get started with this repository, follow these steps:
