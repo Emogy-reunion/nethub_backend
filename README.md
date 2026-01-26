@@ -5,12 +5,13 @@
 1. [Introduction](#introduction)
 2. [Key Features](#key-features)
 3. [Purpose](#purpose)
-4. [Repository Structure](#repository-structure)
-5. [Installation](#installation)
-6. [Usage](#usage)
-7. [Contributing](#contributing)
-8. [License](#license)
-9. [Contact](#contact)
+4. [Technologies Used](#technologies-used)
+5. [Repository Structure](#repository-structure)
+6. [Installation](#installation)
+7. [Usage](#usage)
+8. [Contributing](#contributing)
+9. [License](#license)
+10. [Contact](#contact)
 
 ## Introduction
 * This is the backend for Nethub, a modern e-commerce platform for technology products.
@@ -30,7 +31,23 @@
 * Enables iterative development, allowing the frontend to integrate features like browsing, cart management, and order processing
 * Serves as both a professional portfolio project and a functional tool for real-world business use.
 
+## Technologies Used
+
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)
+![Alembic](https://img.shields.io/badge/Alembic-ED8B00?style=for-the-badge&logo=python&logoColor=white)
+
+- **Backend Framework:** Flask (Python)
+- **Database:** PostgreSQL
+- **ORM:** SQLAlchemy
+- **Migrations:** Flask-Migrate (Alembic)
+- **Validation:** Flask-WTF
+
 ## Repository Structure
+
+```text
 /nethub-backend
 ├── run.py                 # Application entry point
 ├── app/
@@ -39,6 +56,7 @@
 │   ├── utils/             # Utility functions and helpers
 │   ├── forms.py           # Form classes and validations
 │   └── models.py          # Database models
+└── migrations/            # Database migration history
 
 ## Installation
 * To get started with this repository, follow these steps:
@@ -86,4 +104,4 @@
 
 ## Contact
 * If you have any questions, feel free to reach out
-    - **Email: ** markvictormugendi@gmail.com
+    - Email: markvictormugendi@gmail.com
