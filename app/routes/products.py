@@ -133,6 +133,54 @@ def upload_product():
             return jsonify({'error': 'An unexpected error occurred. Please try again.'}), 500
 
 
+@products_bp.route("/update_product/<int:product_id>", methods=['PATCH'])
+def update_product(product_id):
+    '''
+    allows admins to update products
+    '''
+    try:
+        data = request.form
+        form = ProductUpdateForm(data)
+
+        if not form.validate():
+            return jsonify({"errors": form.errors}), 400
+
+        name = form.name.data.lower().strip()
+		group = form.group.data.strip().lower()
+		category = form.category.data.strip().lower()
+		price = form.price.data
+		discount = form.discount.data
+		description = form.description.data.strip()
+		features = form.features.data
+		stock = form.stock.data
+
+        product = db.session.get(product_id)
+        if not product:
+            return jsonify({"error": 'Product not found!'}), 404
+
+        updates = {
+                "name": name,
+                "group": group,
+                "category": category,
+                "price": price,
+                "discount": discount,
+                "description": description,
+                "features": features,
+                "stock": stock
+            }
+
+            for field, value in updates.items():
+                if hasattr(product, field):
+                    setattr(product, field, value)
+
+        db.session.commit()
+
+        updated_product  = product.get_preview()
+        return jsonify({"product": updated_product}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": 'An unexpected error occurred. Please try again!'}), 500
+
 
 @products_bp.route('/get_product_previews', methods=['GET'])
 def get_product_previews():
