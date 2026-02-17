@@ -146,13 +146,13 @@ def update_product(product_id):
             return jsonify({"errors": form.errors}), 400
 
         name = form.name.data.lower().strip()
-		group = form.group.data.strip().lower()
-		category = form.category.data.strip().lower()
-		price = form.price.data
-		discount = form.discount.data
-		description = form.description.data.strip()
-		features = form.features.data
-		stock = form.stock.data
+        group = form.group.data.strip().lower()
+        category = form.category.data.strip().lower()
+        price = form.price.data
+        discount = form.discount.data
+        description = form.description.data.strip()
+        features = form.features.data
+        stock = form.stock.data
 
         product = db.session.get(product_id)
         if not product:
@@ -169,9 +169,9 @@ def update_product(product_id):
                 "stock": stock
             }
 
-            for field, value in updates.items():
-                if hasattr(product, field):
-                    setattr(product, field, value)
+        for field, value in updates.items():
+            if hasattr(product, field):
+                setattr(product, field, value)
 
         db.session.commit()
 
